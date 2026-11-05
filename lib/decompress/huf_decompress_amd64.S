@@ -15,27 +15,6 @@
  * ref: https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart
  */
 .section .note.GNU-stack,"",%progbits
-
-#if defined(__aarch64__)
-/* Mark that this assembly supports BTI & PAC, because it is empty for aarch64.
- * See: https://github.com/facebook/zstd/issues/3841
- * See: https://gcc.godbolt.org/z/sqr5T4ffK
- * See: https://lore.kernel.org/linux-arm-kernel/20200429211641.9279-8-broonie@kernel.org/
- * See: https://reviews.llvm.org/D62609
- */
-.pushsection .note.gnu.property, "a"
-.p2align 3
-.long 4                 /* size of the name - "GNU\0" */
-.long 0x10              /* size of descriptor */
-.long 0x5               /* NT_GNU_PROPERTY_TYPE_0 */
-.asciz "GNU"
-.long 0xc0000000        /* pr_type - GNU_PROPERTY_AARCH64_FEATURE_1_AND */
-.long 4                 /* pr_datasz - 4 bytes */
-.long 3                 /* pr_data - GNU_PROPERTY_AARCH64_FEATURE_1_BTI | GNU_PROPERTY_AARCH64_FEATURE_1_PAC */
-.p2align 3              /* pr_padding - bring everything to 8 byte alignment */
-.popsection
-#endif
-
 #endif
 
 // There appears to be an unreconcilable syntax difference between Linux and Darwin assemblers.
@@ -378,7 +357,7 @@ LOCAL_LABEL(4X1_loop_body):
 
 #undef GET_NEXT_DELT
 #undef DECODE_FROM_DELT
-#undef DECODE
+#undef DECODE_AND_GET_NEXT
 #undef RELOAD_BITS
 LOCAL_LABEL(4X1_exit):
     addq $24, %rsp
